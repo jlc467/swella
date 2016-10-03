@@ -30,9 +30,6 @@
         "never"
       ],
       "react/prop-types": 0
-    },
-    "globals": {
-      "mapboxgl": true
     }
   }
 }
