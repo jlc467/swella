@@ -1,29 +1,28 @@
 import db from './db'
 import Promise from 'bluebird'
+import _ from 'lodash'
 
-const query = {
-  g: 'point(-80.86936 28.62520)',
-  limit: 1,
-  nearest: true,
-  format: 'legacy'
-}
-
-
-const getNearbyZones = coordinates =>
+const getNearbyZones = ({ lat, long }) =>
   new Promise((resolve, reject) => {
+    const query = {
+      g: `point(${long} ${lat})`,
+      limit: 6,
+      nearest: true,
+      format: 'legacy'
+    }
+
     db.geo('zone_polygons', 'zones', query).then(
       zones => {
-        console.log(zones)
+        if (!_.has(zones, 'features')) throw Error('No features found!')
         return resolve(zones)
-      }
-    ).catch(err => {
-      console.log('something went wrong', err)
-      return reject(err)
+      }).catch(err => {
+        console.error(err)
+        return reject({ message: 'Failed to retrieve nearby zones.'})
     })
   })
 
 const getNearbyZonesRequest = (req, res) => {
-  if (!req.body || !req.body.coordinates) { // should not happen, client is trippin
+  if (!req.body || !req.body.coordinates || !req.body.coordinates.lat || !req.body.coordinates.long) {
     return res.status(409).send({ message: 'Request is missing coordinates needed to find nearby zones.' })
   }
   getNearbyZones(req.body.coordinates).then(
