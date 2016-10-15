@@ -1,6 +1,9 @@
 import React, { Component } from 'react'
-import mapboxgl from 'mapbox-gl/dist/mapbox-gl.js'
-import 'mapbox-gl/dist/mapbox-gl.css'
+// import mapboxgl from 'mapbox-gl/dist/mapbox-gl.js'
+// import 'mapbox-gl-geocoder/dist/'
+// import 'mapbox-gl/dist/mapbox-gl.css'
+/*global mapboxgl:true*/
+/*eslint no-undef: "error"*/
 
 
 
@@ -10,6 +13,11 @@ class MapContainer extends Component {
     this.map = new mapboxgl.Map({
       container: 'glmap',
       style: 'mapbox://styles/jcmuse/ciu1vm1t400ac2io4gxmf11xl'
+    })
+    this.geocoder = new mapboxgl.Geocoder()
+    this.map.addControl(this.geocoder)
+    this.geocoder.on('results', e => {
+      console.log('results: ', e.results)
     })
     this.map.on('load', () => {
 
