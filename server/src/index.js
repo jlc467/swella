@@ -1,54 +1,44 @@
-/* eslint-env node */
-'use strict';
+/*eslint-disable no-console*/
+import http from 'http'
+import express from 'express'
+import bodyParser from 'body-parser'
+import { SERVER_API_PORT } from './config'
+import getNearbyZonesRequest from './getNearbyZones'
 
-const express = require('express');
-const app = express();
-const cors = require('cors');
-const router = express.Router();
-const bodyParser = require('body-parser');
-const getForecastTextFromUrl = require('./app/process').getForecastTextFromUrl;
-const getForecastUrl = require('./app/process').getForecastUrl;
-const getForecastFromCoords = require('./app/getForecast').getForecastFromCoords;
-const getDayForecastFromCoordsAndTime = require('./app/getForecast').getDayForecastFromCoordsAndTime;
+export const createRouter = () => {
+  const router = express.Router()
+  router.route('/').get((req, res) => {
+    res.json('Welcome!')
+  })
+  router.route('/getNearbyZones').post(getNearbyZonesRequest)
+  return router
+}
 
-app.use(cors());
-app.use(bodyParser.json());
-app.use('/api', router);
+const errorHandler = (err, req, res, next) => {
+  res.status(500).send('<p>Internal Server Error</p>')
+  console.error(err.stack)
+  next(err)
+}
 
-router.route('/forecast')
-.post((req, res) => {
-  if (req.body.coords) {
-    getForecastFromCoords(req.body.coords).then((json) => {
-      res.json(json);
-    }, (error) => {
-      res.status(400).json(error);
-    });
-  }
-});
+export const createServer = () => {
+  const app = express()
+  app.disable('x-powered-by')
+  app.use(bodyParser.json({limit: '50mb'}))
+  app.use(bodyParser.text())
+  app.use(errorHandler)
+  app.use(createRouter())
 
-router.route('/forecast/day')
-.post((req, res) => {
-  if (req.body.coords && req.body.time) {
-    getDayForecastFromCoordsAndTime(req.body.coords, req.body.time).then((json) => {
-      res.json(json);
-    }, (error) => {
-      if (error.code) {
-        res.status(error.code).json(error);
-      }
-      res.status(400).json(error);
-    });
-  }
-});
+  const server = http.createServer(app)
+  return server
+}
 
-router.route('/marine')
-.post((req, res) => {
-  if (req.body.zoneId) {
-    getForecastTextFromUrl(getForecastUrl(req.body.zoneId)).then((json) => {
-      res.json(json);
-    }, (error) => {
-      res.status(400).json(error);
-    });
-  }
-});
+export const startServer = () => {
 
-app.listen(process.env.PORT || 8081);
+  const server = createServer()
+
+  server.listen(SERVER_API_PORT, () => {
+    console.log(`Swella API Server listening on port ${SERVER_API_PORT}, Ctrl+C to stop`)
+  })
+}
+
+startServer()

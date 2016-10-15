@@ -14,4 +14,9 @@ build
 .env
 npm-debug.log
 
+old_server
+
 server/config/server.js
+server/src/config.js
+
+
