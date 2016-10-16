@@ -2,7 +2,8 @@
   "scripts": {
     "start": "babel-node ./src",
     "build": "npm run build-lib",
-    "build-lib": "rimraf lib && babel ./src -d lib --copy-files"
+    "build-lib": "rimraf lib && babel ./src -d lib --copy-files",
+    "dash": "nodemon --exec nodejs-dashboard npm run start"
   },
   "dependencies": {
     "babel-cli": "^6.8.0",
@@ -14,6 +15,7 @@
     "bluebird": "^3.4.6",
     "body-parser": "^1.15.2",
     "cloudant": "^1.5.1",
+    "cors": "^2.8.1",
     "express": "^4.14.0",
     "lodash": "^4.13.1",
     "moment": "^2.14.1",

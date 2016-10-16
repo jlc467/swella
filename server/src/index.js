@@ -2,6 +2,7 @@
 import http from 'http'
 import express from 'express'
 import bodyParser from 'body-parser'
+import cors from 'cors'
 import { SERVER_API_PORT } from './config'
 import getNearbyZonesRequest from './getNearbyZones'
 
@@ -23,6 +24,7 @@ const errorHandler = (err, req, res, next) => {
 export const createServer = () => {
   const app = express()
   app.disable('x-powered-by')
+  app.use(cors())
   app.use(bodyParser.json({limit: '50mb'}))
   app.use(bodyParser.text())
   app.use(errorHandler)

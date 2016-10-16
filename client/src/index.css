@@ -14,3 +14,14 @@ body,
 }
 
 
+.mapboxgl-ctrl-top-left {
+  display: flex;
+  justify-content: center;
+  position: relative;
+  pointer-events:none;
+  z-index:2;
+}
+
+.mapboxgl-ctrl-top-left .mapboxgl-ctrl {
+  margin-top: 50px;
+}
