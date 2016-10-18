@@ -65,6 +65,20 @@ const setupMap = component => {
       },
       "filter": ["in", "ID", ""]
     })
+    const bbox = [ -82.83236099999993,
+    27.462517000000048,
+    -82.38283998199995,
+    28.037895203000062 ]
+    component.map.fitBounds(bbox, {padding: 20})
+    // setTimeout(pitch, 1000)
+    // function pitch() {
+    //   component.map.easeTo({pitch: 60, duration: 2000})
+    //   setTimeout(unpitch, 2500)
+    // }
+    // function unpitch() {
+    //   component.map.easeTo({pitch: 0, duration: 2000})
+    //   setTimeout(pitch, 2500)
+    // }
     component.map.addControl(component.geocoder)
     component.map.on('mousemove', (e) => {
       const features = component.map.queryRenderedFeatures(e.point, {
@@ -86,11 +100,8 @@ const setupMap = component => {
 }
 
 class MapContainer extends Component {
-  constructor() {
-    super()
-    this.state = {
-      nearbyZones: null
-    }
+  state = {
+    nearbyZones: null
   }
   componentDidMount() {setupMap(this)}
   componentWillUpdate(nextProps, nextState) {
