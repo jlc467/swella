@@ -9,15 +9,12 @@ const getNearbyZones = ({ lat, long }) =>
       g: `point(${long} ${lat})`,
       limit: 6,
       nearest: true,
-      format: 'geojson'
+      format: 'legacy'
     }
 
     db.geo('zone_polygons', 'zones', query).then(
       zones => {
         if (!_.has(zones, 'features')) throw Error('No features found!')
-        const zone = zones.features[0]
-        const zoneExtent = extent(zone)
-        console.log('zoneExtent', zoneExtent)
         return resolve(zones)
       }).catch(err => {
         console.error(err)
