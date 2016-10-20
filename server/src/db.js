@@ -11,9 +11,9 @@ const cloudant = Cloudant(
   },
   (err, cloudant) => {
     if (err) {
-      console.log(err)
+      console.error('Failed to Connect To Cloudant 🙁', err)
     } else {
-      console.log('Connected to Cloudant!')
+      console.log('Connected to Cloudant 😁')
     }
   }
 )
