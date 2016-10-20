@@ -34,6 +34,7 @@ const setupMap = component => {
         "lat": result.geometry.coordinates[1],
         "long": result.geometry.coordinates[0]
       })
+      component.map.getSource('single-point').setData(result.geometry)
     }
   })
   component.map.on('load', () => {
@@ -53,6 +54,22 @@ const setupMap = component => {
         "fill-color": "#7D9FF5"
       }
     })
+    component.map.addSource('single-point', {
+      "type": "geojson",
+      "data": {
+        "type": "FeatureCollection",
+        "features": []
+      }
+    })
+    component.map.addLayer({
+      "id": "point",
+      "source": "single-point",
+      "type": "circle",
+      "paint": {
+        "circle-radius": 10,
+        "circle-color": "#39D900"
+      }
+    })
 
     component.map.addLayer({
       "id": "zones-highlighted",
@@ -65,20 +82,6 @@ const setupMap = component => {
       },
       "filter": ["in", "ID", ""]
     })
-    const bbox = [ -82.83236099999993,
-    27.462517000000048,
-    -82.38283998199995,
-    28.037895203000062 ]
-    component.map.fitBounds(bbox, {padding: 20})
-    // setTimeout(pitch, 1000)
-    // function pitch() {
-    //   component.map.easeTo({pitch: 60, duration: 2000})
-    //   setTimeout(unpitch, 2500)
-    // }
-    // function unpitch() {
-    //   component.map.easeTo({pitch: 0, duration: 2000})
-    //   setTimeout(pitch, 2500)
-    // }
     component.map.addControl(component.geocoder)
     component.map.on('mousemove', (e) => {
       const features = component.map.queryRenderedFeatures(e.point, {
@@ -88,7 +91,9 @@ const setupMap = component => {
       component.map.getCanvas().style.cursor = features.length ? 'pointer' : ''
 
       if (!features.length) {
-        component.map.setFilter('zones-highlighted', ['in', 'ID', ''])
+        component.map.setFilter('zones-highlighted',
+          [ 'in', 'ID', component.state.activeZone && component.state.activeZone.zoneId ? component.state.activeZone.zoneId.toUpperCase() : '' ]
+        )
         return
       }
 
@@ -101,26 +106,26 @@ const setupMap = component => {
 
 class MapContainer extends Component {
   state = {
-    nearbyZones: null
+    activeZone: null
   }
   componentDidMount() {setupMap(this)}
   componentWillUpdate(nextProps, nextState) {
-    if (!this.state.nearbyZones && nextState.nearbyZones) {
-      const feature = nextState.nearbyZones.features[0]
-      this.map.setFilter('zones-highlighted', ['in', 'ID', feature.id.toUpperCase()])
+    if (!this.state.activeZone && nextState.activeZone) {
+      this.map.fitBounds(nextState.activeZone.bbox, { padding: 150 })
+      this.map.setFilter('zones-highlighted', ['in', 'ID', nextState.activeZone.zoneId.toUpperCase()])
     }
   }
   getNearbyZones = coordinates => {
-    this.setState({ nearbyZones: null },
+    this.setState({ activeZone: null },
       () => {
         fetch(`${SWELLA_API_URL}/getNearbyZones`,
           buildJSONRequest('post', { coordinates })
         )
         .then(checkStatus)
         .then(parseJSON)
-        .then(nearbyZones => {
-          console.log(nearbyZones)
-          this.setState({ nearbyZones })
+        .then(activeZone => {
+          console.log(activeZone)
+          this.setState({ activeZone })
         })
         .catch(error => {
           console.log(error)

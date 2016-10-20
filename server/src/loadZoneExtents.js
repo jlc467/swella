@@ -3,7 +3,9 @@ import Promise from 'bluebird'
 import _ from 'lodash'
 
 
-export let zoneExtents = null
+let zoneExtents = null
+
+export const getZoneExtent = zoneId => zoneExtents[zoneId]
 
 /**
  * store load extents in memory

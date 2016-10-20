@@ -2,13 +2,13 @@ import db from './db'
 import Promise from 'bluebird'
 import _ from 'lodash'
 import extent from 'geojson-extent'
-import { zoneExtents } from './loadZoneExtents'
+import { getZoneExtent } from './loadZoneExtents'
 
 const getNearbyZones = ({ lat, long }) =>
   new Promise((resolve, reject) => {
     const query = {
       g: `point(${long} ${lat})`,
-      limit: 6,
+      limit: 1,
       nearest: true,
       format: 'legacy'
     }
@@ -16,8 +16,10 @@ const getNearbyZones = ({ lat, long }) =>
     db.geo('zone_polygons', 'zones', query).then(
       zones => {
         if (!_.has(zones, 'features')) throw Error('No features found!')
-        console.log(zoneExtents[zones.features[0].id])
-        return resolve(zones)
+        return resolve({
+          bbox: getZoneExtent(zones.features[0].id),
+          zoneId: zones.features[0].id
+        })
       }).catch(err => {
         console.error(err)
         return reject({ message: 'Failed to retrieve nearby zones.'})
