@@ -78,10 +78,23 @@ const setupMap = component => {
       "source-layer": "zones-geometry-good",
       "paint": {
         "fill-outline-color": "#28CDA3",
+        "fill-color": "#58B4C9"
+      },
+      "filter": ["in", "ID", ""]
+    })
+
+    component.map.addLayer({
+      "id": "zones-selected",
+      "type": "fill",
+      "source": "zones",
+      "source-layer": "zones-geometry-good",
+      "paint": {
+        "fill-outline-color": "#28CDA3",
         "fill-color": "#28CDA3",
       },
       "filter": ["in", "ID", ""]
     })
+
     component.map.addControl(component.geocoder)
     component.map.on('mousemove', (e) => {
       const features = component.map.queryRenderedFeatures(e.point, {
@@ -100,6 +113,19 @@ const setupMap = component => {
       const feature = features[0]
       component.map.setFilter('zones-highlighted', ['in', 'ID', feature.properties.ID])
     })
+    component.map.on('click', (e) => {
+      const features = component.map.queryRenderedFeatures(e.point, {
+        layers: ['zones']
+      })
+      component.map.getCanvas().style.cursor = features.length ? 'pointer' : ''
+
+      if (!features.length) {
+        return
+      }
+
+      const feature = features[0]
+      component.getZoneById(feature.properties.ID)
+    })
   })
 
 }
@@ -111,8 +137,8 @@ class MapContainer extends Component {
   componentDidMount() {setupMap(this)}
   componentWillUpdate(nextProps, nextState) {
     if (!this.state.activeZone && nextState.activeZone) {
-      this.map.fitBounds(nextState.activeZone.bbox, { padding: 150 })
-      this.map.setFilter('zones-highlighted', ['in', 'ID', nextState.activeZone.zoneId.toUpperCase()])
+      this.map.fitBounds(nextState.activeZone.bbox, { padding: 200 })
+      this.map.setFilter('zones-selected', ['in', 'ID', nextState.activeZone.zoneId.toUpperCase()])
     }
   }
   getNearbyZones = coordinates => {
@@ -124,7 +150,23 @@ class MapContainer extends Component {
         .then(checkStatus)
         .then(parseJSON)
         .then(activeZone => {
-          console.log(activeZone)
+          this.setState({ activeZone })
+        })
+        .catch(error => {
+          console.log(error)
+        })
+      }
+    )
+  }
+  getZoneById = zoneId => {
+    this.setState({ activeZone: null },
+      () => {
+        fetch(`${SWELLA_API_URL}/getZoneById`,
+          buildJSONRequest('post', { zoneId })
+        )
+        .then(checkStatus)
+        .then(parseJSON)
+        .then(activeZone => {
           this.setState({ activeZone })
         })
         .catch(error => {

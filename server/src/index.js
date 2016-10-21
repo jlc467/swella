@@ -6,6 +6,7 @@ import Promise from 'bluebird'
 import cors from 'cors'
 import { SERVER_API_PORT } from './config'
 import getNearbyZonesRequest from './getNearbyZones'
+import getZoneByIdRequest from './getZoneById'
 import loadZoneExtents from './loadZoneExtents'
 
 const createRouter = () => {
@@ -14,6 +15,7 @@ const createRouter = () => {
     res.json('Welcome!')
   })
   router.route('/getNearbyZones').post(getNearbyZonesRequest)
+  router.route('/getZoneById').post(getZoneByIdRequest)
   return router
 }
 
