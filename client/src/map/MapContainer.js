@@ -6,7 +6,9 @@ import has from 'lodash/has'
 // import 'mapbox-gl-geocoder/dist/'
 // import 'mapbox-gl/dist/mapbox-gl.css'
 /*global mapboxgl:true*/
+/*global MapboxGeocoder:true*/
 /*eslint no-undef: "error"*/
+
 
 const setupMap = component => {
   mapboxgl.accessToken = 'pk.eyJ1IjoiamNtdXNlIiwiYSI6ImVqMmlmeTQifQ.Z4cdYoe1Htq-9aEd5Qnjsw'
@@ -19,16 +21,17 @@ const setupMap = component => {
   // disable map rotation using touch rotation gesture
   component.map.touchZoomRotate.disableRotation()
   // setup geocoder
-  component.geocoder = new mapboxgl.Geocoder({
-    flyTo: false,
-    zoom: false,
-    position: "top-left",
-    country: 'us',
-    types: 'region,postcode,place,locality,neighborhood,poi',
-    placeholder: 'Where will you be boating out of?'
+  component.geocoder = new MapboxGeocoder({
+      accessToken: mapboxgl.accessToken,
+      flyTo: false,
+      zoom: false,
+      country: 'us',
+      types: 'region,postcode,place,locality,neighborhood,poi',
+      placeholder: 'Where will you be boating out of?'
   })
-  component.geocoder.on('result', () => {
-    const result = component.geocoder.getResult()
+
+  component.geocoder.on('result', ({ result }) => {
+    console.log(result)
     if (has(result, 'geometry.coordinates')) {
       component.getNearbyZones({
         "lat": result.geometry.coordinates[1],
@@ -66,8 +69,8 @@ const setupMap = component => {
       "source": "single-point",
       "type": "circle",
       "paint": {
-        "circle-radius": 10,
-        "circle-color": "#39D900"
+        "circle-radius": 7,
+        "circle-color": "#FF8000"
       }
     })
 
@@ -77,8 +80,9 @@ const setupMap = component => {
       "source": "zones",
       "source-layer": "zones-geometry-good",
       "paint": {
-        "fill-outline-color": "#28CDA3",
-        "fill-color": "#58B4C9"
+        "fill-outline-color": "#006DE0",
+        "fill-color": "#00DBFF",
+        "fill-opacity": .5
       },
       "filter": ["in", "ID", ""]
     })
@@ -89,8 +93,8 @@ const setupMap = component => {
       "source": "zones",
       "source-layer": "zones-geometry-good",
       "paint": {
-        "fill-outline-color": "#28CDA3",
-        "fill-color": "#28CDA3",
+        "fill-outline-color": "#006DE0",
+        "fill-color": "#00DBFF",
       },
       "filter": ["in", "ID", ""]
     })

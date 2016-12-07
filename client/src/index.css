@@ -14,7 +14,7 @@ body,
 }
 
 
-.mapboxgl-ctrl-top-left {
+.mapboxgl-ctrl-top-right {
   display: flex;
   justify-content: center;
   position: relative;
@@ -22,7 +22,7 @@ body,
   z-index:2;
 }
 
-.mapboxgl-ctrl-top-left .mapboxgl-ctrl {
+.mapboxgl-ctrl-top-right .mapboxgl-ctrl {
   margin-top: 50px;
   min-width: 250px;
 }
