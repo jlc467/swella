@@ -1,0 +1,16 @@
+{
+  "name": "screenshots",
+  "version": "1.0.0",
+  "description": "",
+  "main": "viewport-shots.js",
+  "scripts": {
+    "snapshots": "sleep 5 && nightwatch -t viewport-shots.js",
+    "start": "selenium-standalone start & npm run snapshots"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "nightwatch": "^0.9.12",
+    "selenium-standalone": "^5.9.1"
+  }
+}
