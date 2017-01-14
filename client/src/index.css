@@ -13,6 +13,10 @@ body,
   height: 100%;
 }
 
+.mapboxgl-ctrl-attrib {
+  display: none !important;
+}
+
 
 .mapboxgl-ctrl-top-right {
   display: flex;

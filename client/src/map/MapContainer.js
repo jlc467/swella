@@ -14,7 +14,7 @@ const setupMap = component => {
   mapboxgl.accessToken = 'pk.eyJ1IjoiamNtdXNlIiwiYSI6ImVqMmlmeTQifQ.Z4cdYoe1Htq-9aEd5Qnjsw'
   component.map = new mapboxgl.Map({
     container: 'glmap',
-    style: 'mapbox://styles/jcmuse/ciubuehhf003l2ipixkxcllyk'
+    style: 'mapbox://styles/jcmuse/ciwtpzev9002h2prwecbbvcg1'
   })
   // disable map rotation using right click + drag
   component.map.dragRotate.disable()
@@ -54,7 +54,8 @@ const setupMap = component => {
       "source-layer": "zones-geometry-good",
       "paint": {
         "fill-outline-color": "#5888E8",
-        "fill-color": "#7D9FF5"
+        "fill-color": "#7D9FF5",
+        "fill-opacity": 0
       }
     })
     component.map.addSource('single-point', {
@@ -80,8 +81,8 @@ const setupMap = component => {
       "source": "zones",
       "source-layer": "zones-geometry-good",
       "paint": {
-        "fill-outline-color": "#006DE0",
-        "fill-color": "#00DBFF",
+        "fill-outline-color": "#F2AE51",
+        "fill-color": "#FFB454",
         "fill-opacity": .5
       },
       "filter": ["in", "ID", ""]
@@ -93,13 +94,14 @@ const setupMap = component => {
       "source": "zones",
       "source-layer": "zones-geometry-good",
       "paint": {
-        "fill-outline-color": "#006DE0",
-        "fill-color": "#00DBFF",
+        "fill-outline-color": "#F2AE51",
+        "fill-color": "#FFB454",
+        "fill-opacity": .5
       },
       "filter": ["in", "ID", ""]
     })
 
-    component.map.addControl(component.geocoder)
+    //component.map.addControl(component.geocoder)
     component.map.on('mousemove', (e) => {
       const features = component.map.queryRenderedFeatures(e.point, {
         layers: ['zones']
