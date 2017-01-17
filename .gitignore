@@ -24,3 +24,5 @@ server/src/config.js
 client/reports/
 
 zone_screenshots/reports/
+
+zone_screenshots/screenshots

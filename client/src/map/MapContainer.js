@@ -1,6 +1,6 @@
-import React, {Component} from 'react';
-import {parseJSON, checkStatus, buildJSONRequest} from '../utility';
-import {SWELLA_API_URL} from '../config';
+import React, { Component } from 'react';
+import { parseJSON, checkStatus, buildJSONRequest } from '../utility';
+import { SWELLA_API_URL } from '../config';
 import has from 'lodash/has';
 import createHashHistory from 'history/createHashHistory';
 const history = createHashHistory({ hashType: 'slash' });
@@ -12,7 +12,10 @@ const history = createHashHistory({ hashType: 'slash' });
 /*eslint no-undef: "error"*/
 const setupMap = component => {
   mapboxgl.accessToken = 'pk.eyJ1IjoiamNtdXNlIiwiYSI6ImVqMmlmeTQifQ.Z4cdYoe1Htq-9aEd5Qnjsw';
-  component.map = new mapboxgl.Map({ container: 'glmap', style: 'mapbox://styles/jcmuse/ciwtpzev9002h2prwecbbvcg1' });
+  component.map = new mapboxgl.Map({
+    container: 'glmap',
+    style: 'mapbox://styles/jcmuse/ciwtpzev9002h2prwecbbvcg1'
+  });
   // disable map rotation using right click + drag
   component.map.dragRotate.disable();
   // disable map rotation using touch rotation gesture
@@ -30,47 +33,50 @@ const setupMap = component => {
   component.geocoder.on('result', ({ result }) => {
     console.log(result);
     if (has(result, 'geometry.coordinates')) {
-      component.getNearbyZones({ 'lat': result.geometry.coordinates[1], 'long': result.geometry.coordinates[0] });
+      component.getNearbyZones({
+        lat: result.geometry.coordinates[1],
+        long: result.geometry.coordinates[0]
+      });
       component.map.getSource('single-point').setData(result.geometry);
     }
   });
   component.map.on('load', () => {
-    component.map.addSource('zones', { 'type': 'vector', 'url': 'mapbox://jcmuse.r53o9a4i' });
+    component.map.addSource('zones', { type: 'vector', url: 'mapbox://jcmuse.r53o9a4i' });
 
     component.map.addLayer({
-      'id': 'zones',
-      'type': 'fill',
-      'source': 'zones',
+      id: 'zones',
+      type: 'fill',
+      source: 'zones',
       'source-layer': 'zones-geometry-good',
-      'paint': { 'fill-outline-color': '#5888E8', 'fill-color': '#7D9FF5', 'fill-opacity': 0 }
+      paint: { 'fill-outline-color': '#5888E8', 'fill-color': '#7D9FF5', 'fill-opacity': 0 }
     });
     component.map.addSource('single-point', {
-      'type': 'geojson',
-      'data': { 'type': 'FeatureCollection', 'features': [] }
+      type: 'geojson',
+      data: { type: 'FeatureCollection', features: [] }
     });
     component.map.addLayer({
-      'id': 'point',
-      'source': 'single-point',
-      'type': 'circle',
-      'paint': { 'circle-radius': 7, 'circle-color': '#FF8000' }
-    });
-
-    component.map.addLayer({
-      'id': 'zones-highlighted',
-      'type': 'fill',
-      'source': 'zones',
-      'source-layer': 'zones-geometry-good',
-      'paint': { 'fill-outline-color': '#F2AE51', 'fill-color': '#FFB454', 'fill-opacity': 0.5 },
-      'filter': [ 'in', 'ID', '' ]
+      id: 'point',
+      source: 'single-point',
+      type: 'circle',
+      paint: { 'circle-radius': 7, 'circle-color': '#FF8000' }
     });
 
     component.map.addLayer({
-      'id': 'zones-selected',
-      'type': 'fill',
-      'source': 'zones',
+      id: 'zones-highlighted',
+      type: 'fill',
+      source: 'zones',
       'source-layer': 'zones-geometry-good',
-      'paint': { 'fill-outline-color': '#F2AE51', 'fill-color': '#FFB454', 'fill-opacity': 0.5 },
-      'filter': [ 'in', 'ID', '' ]
+      paint: { 'fill-outline-color': '#F2AE51', 'fill-color': '#FFB454', 'fill-opacity': 0.5 },
+      filter: [ 'in', 'ID', '' ]
+    });
+
+    component.map.addLayer({
+      id: 'zones-selected',
+      type: 'fill',
+      source: 'zones',
+      'source-layer': 'zones-geometry-good',
+      paint: { 'fill-outline-color': '#F2AE51', 'fill-color': '#FFB454', 'fill-opacity': 0.5 },
+      filter: [ 'in', 'ID', '' ]
     });
     if (routeHasZoneId(history.location)) {
       const initialParams = getParamsFromLocation(history.location);
@@ -111,7 +117,9 @@ const setupMap = component => {
 const getParamsFromLocation = location => {
   const toReturn = {
     zoneId: location.pathname.replace('/zoneId/', ''),
-    zoomOutFactor: location.search.indexOf('zoomOutFactor') > -1 ? location.search.replace('?zoomOutFactor=', '') : '0'
+    zoomOutFactor: location.search.indexOf('zoomOutFactor') > -1
+      ? location.search.replace('?zoomOutFactor=', '')
+      : '0'
   };
   return toReturn;
 };
@@ -144,13 +152,21 @@ class MapContainer extends Component {
           this.map.jumpTo({ zoom: newZoomLevel });
         }
       });
-      this.map.fitBounds(this.state.activeZone.bbox, { easing: () => 1, linear: false, padding: 200 }, {
-        zoomOutFactor: this.state.zoomOutFactor
-      });
+      this.map.fitBounds(
+        this.state.activeZone.bbox,
+        { easing: () => 1, linear: false, padding: 200 },
+        { zoomOutFactor: this.state.zoomOutFactor }
+      );
 
-      this.map.setFilter('zones-selected', [ 'in', 'ID', this.state.activeZone.zoneId.toUpperCase() ]);
+      this.map.setFilter('zones-selected', [
+        'in',
+        'ID',
+        this.state.activeZone.zoneId.toUpperCase()
+      ]);
     });
-    this.map.jumpTo({ zoom: this.map.getZoom() + 0.00001 }); // change bounds to force fitBounds to trigger zoomend
+    this.map.jumpTo({
+      zoom: this.map.getZoom() + 0.00001
+    }); // change bounds to force fitBounds to trigger zoomend
   };
   getNearbyZones = coordinates => {
     this.setState({ activeZone: null }, () => {
@@ -166,30 +182,37 @@ class MapContainer extends Component {
     });
   };
   getZoneById = (zoneId, zoomOutFactor) => {
+    window.document.title = 'empty';
     if (this.state.activeZone && this.state.activeZone.zoneId === zoneId) {
       // short circuit data call
+      window.document.title = zoneId;
       this.setState({ zoomOutFactor }, () => this.handleZoneZoom());
       return;
     }
-    fetch(`${SWELLA_API_URL}/getZoneById`, buildJSONRequest('post', { zoneId }))
-      .then(checkStatus)
-      .then(parseJSON)
-      .then(activeZone => {
-        console.log(activeZone, 'activeZone');
-        this.setState({ activeZone, zoomOutFactor }, () => this.handleZoneZoom());
-      })
-      .catch(error => {
-        console.log(error);
-        console.log(error);
-      });
+    this.setState({ activeZone: null }, () => {
+      fetch(`${SWELLA_API_URL}/getZoneById`, buildJSONRequest('post', { zoneId }))
+        .then(checkStatus)
+        .then(parseJSON)
+        .then(activeZone => {
+          if (activeZone && activeZone.bbox) {
+            window.document.title = zoneId;
+            console.log(activeZone, 'activeZone');
+            this.setState({ activeZone, zoomOutFactor }, () => this.handleZoneZoom());
+          }
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    });
   };
   render() {
     return (
-      <div className='MapContainer'>
-        <div id='glmap' />
+      <div className="MapContainer">
+        <div id="glmap" />
       </div>
     );
   }
 }
 
-export default MapContainer
+export default MapContainer;
+
