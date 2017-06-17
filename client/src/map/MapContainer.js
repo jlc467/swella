@@ -14,7 +14,7 @@ const setupMap = component => {
   mapboxgl.accessToken = 'pk.eyJ1IjoiamNtdXNlIiwiYSI6ImVqMmlmeTQifQ.Z4cdYoe1Htq-9aEd5Qnjsw';
   component.map = new mapboxgl.Map({
     container: 'glmap',
-    style: 'mapbox://styles/jcmuse/ciwtpzev9002h2prwecbbvcg1'
+    style: 'mapbox://styles/jcmuse/cih9a9bbq0023rom4g8ehgvf0'
   });
   // disable map rotation using right click + drag
   component.map.dragRotate.disable();
@@ -66,8 +66,8 @@ const setupMap = component => {
       type: 'fill',
       source: 'zones',
       'source-layer': 'zones-geometry-good',
-      paint: { 'fill-outline-color': '#F2AE51', 'fill-color': '#FFB454', 'fill-opacity': 0.5 },
-      filter: [ 'in', 'ID', '' ]
+      paint: { 'fill-outline-color': 'green', 'fill-opacity': 0.2 },
+      filter: ['in', 'ID', '']
     });
 
     component.map.addLayer({
@@ -75,33 +75,33 @@ const setupMap = component => {
       type: 'fill',
       source: 'zones',
       'source-layer': 'zones-geometry-good',
-      paint: { 'fill-outline-color': '#F2AE51', 'fill-color': '#FFB454', 'fill-opacity': 0.5 },
-      filter: [ 'in', 'ID', '' ]
+      paint: { 'fill-outline-color': '#F2AE51', 'fill-opacity': 0.2 },
+      filter: ['in', 'ID', '']
     });
     if (routeHasZoneId(history.location)) {
       const initialParams = getParamsFromLocation(history.location);
       component.getZoneById(initialParams.zoneId, initialParams.zoomOutFactor);
     }
-    //component.map.addControl(component.geocoder)
-    // component.map.on('mousemove', e => {
-    //   const features = component.map.queryRenderedFeatures(e.point, { layers: [ 'zones' ] });
-    //   // Change the cursor style as a UI indicator.
-    //   component.map.getCanvas().style.cursor = features.length ? 'pointer' : '';
-    //   if (!features.length) {
-    //     component.map.setFilter('zones-highlighted', [
-    //       'in',
-    //       'ID',
-    //       component.state.activeZone && component.state.activeZone.zoneId
-    //         ? component.state.activeZone.zoneId.toUpperCase()
-    //         : ''
-    //     ]);
-    //     return;
-    //   }
-    //   const feature = features[0];
-    //   component.map.setFilter('zones-highlighted', [ 'in', 'ID', feature.properties.ID ]);
-    // });
+    component.map.addControl(component.geocoder);
+    component.map.on('mousemove', e => {
+      const features = component.map.queryRenderedFeatures(e.point, { layers: ['zones'] });
+      // Change the cursor style as a UI indicator.
+      component.map.getCanvas().style.cursor = features.length ? 'pointer' : '';
+      if (!features.length) {
+        component.map.setFilter('zones-highlighted', [
+          'in',
+          'ID',
+          component.state.activeZone && component.state.activeZone.zoneId
+            ? component.state.activeZone.zoneId.toUpperCase()
+            : ''
+        ]);
+        return;
+      }
+      const feature = features[0];
+      component.map.setFilter('zones-highlighted', ['in', 'ID', feature.properties.ID]);
+    });
     component.map.on('click', e => {
-      const features = component.map.queryRenderedFeatures(e.point, { layers: [ 'zones' ] });
+      const features = component.map.queryRenderedFeatures(e.point, { layers: ['zones'] });
       component.map.getCanvas().style.cursor = features.length ? 'pointer' : '';
 
       if (!features.length) {
@@ -215,4 +215,3 @@ class MapContainer extends Component {
 }
 
 export default MapContainer;
-

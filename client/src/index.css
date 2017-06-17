@@ -17,16 +17,20 @@ body,
   display: none !important;
 }
 
+.mapboxgl-ctrl-geocoder, .mapboxgl-ctrl-geocoder ul {
+    box-shadow: 0 0 0 2px black;
+}
 
 .mapboxgl-ctrl-top-right {
   display: flex;
-  justify-content: center;
+  justify-content: left;
   position: relative;
   pointer-events:none;
   z-index:2;
 }
 
 .mapboxgl-ctrl-top-right .mapboxgl-ctrl {
+  margin-left: 20px;
   margin-top: 50px;
   min-width: 250px;
 }
